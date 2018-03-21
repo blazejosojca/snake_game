@@ -39,16 +39,36 @@ food_spawn = True
 direction = 'RIGHT'
 change_to = direction
 
+
 # GameOver
 def game_over():
     game_over_font = pygame.font.SysFont('Monospace Regular', 70)
     game_over_text = game_over_font.render('Game Over !', True, red)
     game_over_rect = game_over_text.get_rect()
     game_over_rect.midtop = (360, 15)
-    play_ground.blit(game_over_text, game_over_recat)
+    play_ground.blit(game_over_text, game_over_rect)
     pygame.display.flip()
     time.sleep(5)
-    pygame.quit() # pygame exit
-    sys.exit() # close console
+    pygame.quit()  # pygame exit
+    sys.exit()  # close console
+
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT or event.key == ord('d'):
+                change_to = 'RIGHT'
+            elif event.key == pygame.K_LEFT or event.key == ord('a'):
+                change_to = 'LEFT'
+            elif event.key == pygame.K_UP or event.key == ord('w'):
+                change_to = 'UP'
+            elif event.key == pygame.K_DOWN or event.key == ord('s'):
+                change_to = 'DOWN'
+            elif event.key == pygame.K_ESCAPE:
+                pygame.event.post(pygame.event.Event(QUIT))
+
 
 
