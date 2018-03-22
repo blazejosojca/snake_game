@@ -24,7 +24,7 @@ red = pygame.Color(255, 0, 0) # gameover
 green = pygame.Color(0, 255, 0) # colour of snake
 black = pygame.Color(0, 0, 0) # score
 white = pygame.Color(255, 255, 255) # background
-brown = pygame.Color(255, 255, 50) # food
+blue = pygame.Color(0, 0, 255) # food
 
 # time controller by frame per seconds
 fps_controller = pygame.time.Clock()
@@ -43,14 +43,19 @@ change_to = direction
 # GameOver
 def game_over():
     game_over_font = pygame.font.SysFont('Monospace Regular', 70)
-    game_over_text = game_over_font.render('Game Over !', True, red)
-    game_over_rect = game_over_text.get_rect()
+    game_over_render = game_over_font.render('Game Over !', True, red)
+    game_over_rect = game_over_render.get_rect()
     game_over_rect.midtop = (360, 15)
-    play_ground.blit(game_over_text, game_over_rect)
+    play_ground.blit(game_over_render, game_over_rect)
     pygame.display.flip()
     time.sleep(5)
     pygame.quit()  # pygame exit
     sys.exit()  # close console
+
+
+def show_score():
+    score_font = pygame.font.SysFont('Monospace Regular', 35)
+    score_render = score_font.render('', True, blue)
 
 
 while True:
@@ -61,13 +66,13 @@ while True:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT or event.key == ord('d'):
                 change_to = 'RIGHT'
-            elif event.key == pygame.K_LEFT or event.key == ord('a'):
+            if event.key == pygame.K_LEFT or event.key == ord('a'):
                 change_to = 'LEFT'
-            elif event.key == pygame.K_UP or event.key == ord('w'):
+            if event.key == pygame.K_UP or event.key == ord('w'):
                 change_to = 'UP'
-            elif event.key == pygame.K_DOWN or event.key == ord('s'):
+            if event.key == pygame.K_DOWN or event.key == ord('s'):
                 change_to = 'DOWN'
-            elif event.key == pygame.K_ESCAPE:
+            if event.key == pygame.K_ESCAPE:
                 pygame.event.post(pygame.event.Event(QUIT))
 
     # validation of direction
@@ -75,7 +80,7 @@ while True:
         direction = 'RIGHT'
     if change_to == 'LEFT' and not direction == 'RIGHT':
         direction = 'LEFT'
-    if change_to == 'UP' and not direction == 'RIGHT':
+    if change_to == 'UP' and not direction == 'DOWN':
         direction = 'UP'
     if change_to == 'DOWN' and not direction == 'UP':
         direction = 'DOWN'
@@ -86,9 +91,9 @@ while True:
     if direction == 'LEFT':
         snake_position[0] -= 10
     if direction == 'UP':
-        snake_position[1] += 10
-    if direction == 'DOWN':
         snake_position[1] -= 10
+    if direction == 'DOWN':
+        snake_position[1] += 10
 
     # Snake body mechanism
     snake_body.insert(0, list(snake_position))
@@ -107,8 +112,16 @@ while True:
     for pos in snake_body:
         pygame.draw.rect(play_ground, green, pygame.Rect(pos[0], pos[1], 10, 10))
 
-    pygame.draw.rect(play_ground, brown, pygame.Rect(food_position[0], food_position[1], 10, 10 ))
+    pygame.draw.rect(play_ground, blue, pygame.Rect(food_position[0], food_position[1], 10, 10))
 
+    if snake_position[0] > 710 or snake_position[0] < 0:
+        game_over()
+    if snake_position[1] > 550 or snake_position[1] < 0:
+        game_over()
+
+    for bloc in snake_body[1:]:
+        if snake_position[0] == bloc[0] and snake_position[1] == bloc[1]:
+            game_over()
 
     pygame.display.flip()
-    fps_controller.tick(25)
+    fps_controller.tick(15)
