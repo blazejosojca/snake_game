@@ -39,6 +39,8 @@ food_spawn = True
 direction = 'RIGHT'
 change_to = direction
 
+score = 0
+
 
 # GameOver
 def game_over():
@@ -48,14 +50,22 @@ def game_over():
     game_over_rect.midtop = (360, 15)
     play_ground.blit(game_over_render, game_over_rect)
     pygame.display.flip()
+    show_score(0)
     time.sleep(5)
     pygame.quit()  # pygame exit
     sys.exit()  # close console
 
 
-def show_score():
+def show_score(choice = 1):
     score_font = pygame.font.SysFont('Monospace Regular', 35)
-    score_render = score_font.render('', True, blue)
+    score_render = score_font.render('Score : {0}'.format(score), True, blue)
+    score_rectangle = score_render.get_rect()
+    if choice == 1:
+        score_rectangle.midtop = (80, 10)
+    else:
+        score_rectangle.midtop = (360, 120)
+    play_ground.blit(score_render, score_rectangle)
+    pygame.display.flip()
 
 
 while True:
@@ -98,6 +108,7 @@ while True:
     # Snake body mechanism
     snake_body.insert(0, list(snake_position))
     if snake_position[0] == food_position[0] and snake_position[1] == food_position[1]:
+        score += 1
         food_spawn = False
     else:
         snake_body.pop()
@@ -122,6 +133,7 @@ while True:
     for bloc in snake_body[1:]:
         if snake_position[0] == bloc[0] and snake_position[1] == bloc[1]:
             game_over()
+    show_score()
 
     pygame.display.flip()
     fps_controller.tick(15)
